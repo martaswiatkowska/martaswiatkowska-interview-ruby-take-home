@@ -60,7 +60,7 @@ services:
     container_name: mock_api_two
     image: clue/json-server
     volumes:
-      - ./externals/mock_api_one:/data
+      - ./externals/mock_api_two:/data
     ports:
       - "3061:80"
 
@@ -86,3 +86,17 @@ services:
       mock_api_two:
         condition: service_started
     restart: on-failure
+
+  test:
+    build: .
+    container_name: test
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+    environment:
+      RAILS_ENV: test
+    depends_on:
+      postgres-test:
+        condition: service_started
+    entrypoint: ["bundle", "exec", "rspec"]
